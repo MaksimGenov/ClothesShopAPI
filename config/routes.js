@@ -10,4 +10,10 @@ module.exports = (app) => {
   app.use('/api/brands', brandsRouter)
   app.use('/api/categories', categoriesRouter)
   app.use('/api/cart', cartRouter)
+  app.use((error, req, res, next) => {
+    if (error) {
+      res.status(500)
+      res.json({error: 'Oops something went wrong!'})
+    }
+  })
 }

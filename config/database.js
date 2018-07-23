@@ -5,6 +5,7 @@ require('../models/Size')
 require('../models/Brand')
 require('../models/Cart')
 require('../models/Category')
+require('../models/Image')
 const User = require('../models/User')
 
 module.exports = async (settings) => {

@@ -1,10 +1,9 @@
 const router = require('express').Router()
-const productsController = require('../products/products-controller')
-router
-  .post('/create', productsController.create)
-  .get('/search', productsController.search)
-  .get('/all', productsController.getAll)
-  .get('/count', productsController.getCount)
-  .get('/details/:id', productsController.getById)
+const productsController = require('./controllers/index')
 
 module.exports = router
+  .post('/create', productsController.create)
+  .post('/remove/:id', productsController.remove)
+  .get('/get/:id', productsController.get)
+  .get('/all', productsController.getAll)
+  .post('/update/:id', productsController.update)
