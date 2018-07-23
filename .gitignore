@@ -81,7 +81,7 @@ typings/
 #My custom ignores
 
 #ignore all files in "images" dir
-!public/images/.gitkeep
 public/images/*
+!public/images/.gitkeep
 
 #End of My custom ignores
