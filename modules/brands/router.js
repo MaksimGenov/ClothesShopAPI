@@ -1,9 +1,7 @@
 const router = require('express').Router()
-const brandsController = require('../brands/brands-controller')
+const brandsController = require('./controllers/index')
+
 router
   .post('/create', brandsController.create)
-  .post('/delete/:id', brandsController.remove)
-  .get('/all', brandsController.getAll)
-  .get('/count', brandsController.getCount)
-  .get('/:id', brandsController.getById)
+  .get('/get/:id', brandsController.get)
 module.exports = router
