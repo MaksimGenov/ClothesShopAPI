@@ -1,16 +1,9 @@
 const mongoose = require('mongoose')
 const Brand = mongoose.model('Brand')
 
-module.exports = async function get (req, res, next) {
-  const brandId = req.params.id
-
-  if (!brandId && !mongoose.Types.ObjectId.isValid(brandId)) {
-    res.status(400)
-    return res.json({error: 'Invalid id!'})
-  }
-
+module.exports = async function getAll (req, res, next) {
   try {
-    const brand = await Brand.findById(brandId)
+    const brands = await Brand.find()
       .populate({
         path: 'products',
         model: 'Product',
@@ -26,12 +19,7 @@ module.exports = async function get (req, res, next) {
         model: 'Product',
         populate: {path: 'categories', model: 'Category', select: 'name'}
       })
-
-    if (!brand) {
-      res.status(400)
-      res.json({error: `Brand with id: "${brandId}" does not exist`})
-    }
-    res.json(brand)
+    res.json(brands)
   } catch (error) {
     next(error)
   }

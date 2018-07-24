@@ -4,8 +4,8 @@ const path = require('path')
 
 function remove (image) {
   return new Promise((resolve, reject) => {
-    fs.unlink(image.path, async () => {
-      // if (error) { return reject(error) }
+    fs.unlink(image.path, async (error) => {
+      if (error) { return reject(error) }
 
       try {
         await Image.findByIdAndRemove(image._id)

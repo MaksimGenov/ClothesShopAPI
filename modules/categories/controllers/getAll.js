@@ -1,10 +1,9 @@
-const mongoose = require('mongoose')
-const Category = mongoose.model('Category')
+const categoryServices = require('../services/index')
 
-module.exports = async function get (req, res, next) {
+module.exports = async function getAll (req, res, next) {
   try {
-    const category = await Category.find().populate('products')
-    res.json(category)
+    const categories = await categoryServices.getAllCategories()
+    res.json(categories)
   } catch (error) {
     next(error)
   }
