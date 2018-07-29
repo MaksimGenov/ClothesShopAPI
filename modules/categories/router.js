@@ -1,12 +1,12 @@
 const router = require('express').Router()
-const categoriesController = require('./controllers/index')
+const categoriesController = require('./categories-controller')
 // const passport = require('passport')
 
 router
-  .post('/create', categoriesController.create)
-  .get('/all', categoriesController.getAll)
-  .get('/get/:id', categoriesController.get)
-  .put('/update/:id', categoriesController.update)
-  .delete('/delete/:id', categoriesController.remove)
+  .post('/create', categoriesController.createCategory)
+  .get('/get/:id', categoriesController.getCategoryById)
+  .get('/all', categoriesController.getAllCategories)
+  .delete('/delete/:id', categoriesController.deleteCategory)
+  .put('/update/:id', categoriesController.updateCategory)
 
 module.exports = router

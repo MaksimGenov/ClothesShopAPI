@@ -9,7 +9,7 @@ module.exports = (app) => {
   app.use('/api/products', productsRouter)
   app.use('/api/brands', brandsRouter)
   app.use('/api/categories', categoriesRouter)
-  app.use('/api/cart', cartRouter)
+  app.use('/api/carts', cartRouter)
   app.use((error, req, res, next) => {
     if (error) {
       if (error.name === 'TypeError' || 'ReferenceError') {

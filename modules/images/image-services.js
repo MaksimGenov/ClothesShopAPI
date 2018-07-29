@@ -2,13 +2,14 @@ const Image = require('mongoose').model('Image')
 const fs = require('fs')
 const path = require('path')
 
-function remove (image) {
-  return new Promise((resolve, reject) => {
+function remove (imageId) {
+  return new Promise(async (resolve, reject) => {
+    const image = await Image.findById(imageId)
     fs.unlink(image.path, async (error) => {
       if (error) { return reject(error) }
 
       try {
-        await Image.findByIdAndRemove(image._id)
+        await Image.findByIdAndRemove(imageId)
         resolve()
       } catch (error) {
         reject(error)
