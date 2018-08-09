@@ -7,22 +7,26 @@ const errorMsgGenerator = require('../../utils/errorMessageGenerator')
 
 async function createProduct (req, res, next) {
   let { brandId, model, description, price, categoriesIds, color } = req.body
-  let images = req.files
+  let files = req.files
 
   try {
     categoriesIds = JSON.parse(categoriesIds)
   } catch (error) {
     return next(new TypeError(errorMsgGenerator.invalidDataMsg('categories', 'JSON array', categoriesIds)))
   }
-
+  let images
   try {
-    images = await Promise.all(Object.keys(images).map(key => imageServices.create(images[key])))
+    images = await Promise.all(Object.keys(files).map(key => imageServices.create(files[key])))
     await brandServices.getBrandById(brandId)
     await Promise.all(categoriesIds.map(categoryId => categoryServices.getCategoryById(categoryId)))
     const product = await productServices.createProduct(brandId, model, description, price, categoriesIds, color, images)
+    await brandServices.addProductToBrand(brandId, product.id)
+    await Promise.all(categoriesIds.map(categoryId => categoryServices.addProductToCategory(categoryId, product.id)))
     res.json(product)
   } catch (error) {
-    await Promise.all(images.map(image => imageServices.remove(image.id)))
+    if (images) {
+      await Promise.all(images.map(image => imageServices.remove(image.id)))
+    }
     next(error)
   }
 }

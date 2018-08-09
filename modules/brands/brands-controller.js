@@ -6,13 +6,16 @@ const cartServices = require('../cart/cart-services')
 
 async function createBrand (req, res, next) {
   const { name, description } = req.body
-  let image = req.files.image
+  let file = req.files.image
+  let image
   try {
-    image = await imageServices.create(image)
+    image = await imageServices.create(file)
     const brand = await brandServices.createBrand(name, description, image)
     res.json(brand)
   } catch (error) {
-    imageServices.remove(image.id)
+    if (image) {
+      imageServices.remove(image.id)
+    }
     next(error)
   }
 }
@@ -86,8 +89,8 @@ async function updateBrand (req, res, next) {
 async function getBrandProducts (req, res, next) {
   const brandId = req.params.id
   try {
-    const brand = await getBrandById(brandId)
-    const products = await Promise.all(brand.products.map(productId => productServices.getProductById(productId)))
+    const brand = await brandServices.getBrandById(brandId)
+    const products = await Promise.all(brand.products.map(productId => productServices.getPopulatedProduct(productId)))
     res.json(products)
   } catch (error) {
     next(error)
