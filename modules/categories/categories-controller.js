@@ -1,12 +1,18 @@
 const categoryServices = require('./category-services')
 const productServices = require('../products/product-services')
-
+const imageService = require('../images/image-services')
 async function createCategory (req, res, next) {
   const {name} = req.body
+  const file = req.files.image
+  let image
   try {
-    const category = await categoryServices.createCategory(name)
+    image = await imageService.create(file)
+    const category = await categoryServices.createCategory(name, image)
     res.json(category)
   } catch (error) {
+    if (image) {
+      await imageService.remove(image)
+    }
     next(error)
   }
 }
