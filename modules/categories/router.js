@@ -4,6 +4,7 @@ const categoriesController = require('./categories-controller')
 
 router
   .post('/create', categoriesController.createCategory)
+  .get('/:id/products', categoriesController.getCategoryProducts)
   .get('/get/:id', categoriesController.getCategoryById)
   .get('/all', categoriesController.getAllCategories)
   .delete('/delete/:id', categoriesController.deleteCategory)
