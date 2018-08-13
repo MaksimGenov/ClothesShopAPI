@@ -54,14 +54,14 @@ async function deleteProduct (req, res, next) {
   const productId = req.params.id
   try {
     const product = await productServices.deleteProduct(productId)
-    const brandId = product.brand.id
+    const brandId = product.brand._id
     await brandServices.removeProductFromBrand(brandId, productId)
 
     let categories = product.categories || []
-    await Promise.all(categories.map(category => categoryServices.removeProductFromCategory(category.id, productId)))
+    await Promise.all(categories.map(category => categoryServices.removeProductFromCategory(category._id, productId)))
 
     let images = product.images || []
-    await Promise.all(images.map(image => imageServices.remove(image.id)))
+    await Promise.all(images.map(image => imageServices.remove(image._id)))
 
     await Promise.all(product.carts.map(cartId => cartServices.removeProductFromCart(cartId, productId)))
 

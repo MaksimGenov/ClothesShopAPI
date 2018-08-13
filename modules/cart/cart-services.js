@@ -51,7 +51,7 @@ function removeProductFromCart (cartId, productId) {
   return new Promise(async (resolve, reject) => {
     try {
       let cart = await getCartById(cartId)
-      cart.products = cart.products.filter(id => id !== productId)
+      cart.products = cart.products.filter(id => id.toString() !== productId)
       await cart.save()
       resolve('Product removed from cart.')
     } catch (error) {

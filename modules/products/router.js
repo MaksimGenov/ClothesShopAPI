@@ -5,5 +5,5 @@ module.exports = router
   .post('/create', productsController.createProduct)
   .get('/get/:id', productsController.getProductById)
   .get('/all', productsController.getAllProducts)
-  .delete('/remove/:id', productsController.deleteProduct)
+  .delete('/delete/:id', productsController.deleteProduct)
   .put('/update/:id', productsController.updateProduct)
