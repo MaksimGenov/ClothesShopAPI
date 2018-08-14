@@ -10,4 +10,8 @@ function unexistingModelId (model, modelId) {
   return `${model} with id: ${modelId} does not exist!`
 }
 
-module.exports = {invalidDataMsg, invalidIdMsg, unexistingModelId}
+function unexistingModel (modelName) {
+  return `${modelName} model not found!`
+}
+
+module.exports = {invalidDataMsg, invalidIdMsg, unexistingModelId, unexistingModel}
