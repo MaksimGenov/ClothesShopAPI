@@ -73,7 +73,7 @@ function removeProductFromCategory (categoryId, productId) {
   return new Promise(async (resolve, reject) => {
     try {
       let category = await getCategoryById(categoryId)
-      category.products = category.products.filter(id => id.toString() !== productId)
+      category.products = category.products.filter(id => id.toString() !== productId.toString())
       await category.save()
       resolve(category)
     } catch (error) {
@@ -101,7 +101,7 @@ function updateCategory (categoryId, name) {
 function getByName (name) {
   return new Promise(async (resolve, reject) => {
     try {
-      let category = await Category.find({name})
+      let category = await Category.findOne({name: name.toLowerCase()})
       if (!category) {
         return reject(new ReferenceError(errorMsgGenerator.unexistingModel('Category')))
       }

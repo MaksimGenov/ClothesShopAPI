@@ -6,22 +6,24 @@ const cartServices = require('../cart/cart-services')
 const errorMsgGenerator = require('../../utils/errorMessageGenerator')
 
 async function createProduct (req, res, next) {
-  let { brandId, model, description, price, categoriesIds, color } = req.body
+  let { brand, model, description, price, categories, color } = req.body
   let files = req.files
 
   try {
-    categoriesIds = JSON.parse(categoriesIds)
+    categories = JSON.parse(categories)
   } catch (error) {
-    return next(new TypeError(errorMsgGenerator.invalidDataMsg('categories', 'JSON array', categoriesIds)))
+    return next(new TypeError(errorMsgGenerator.invalidDataMsg('categories', 'JSON array', categories)))
   }
   let images
   try {
     images = await Promise.all(Object.keys(files).map(key => imageServices.create(files[key])))
-    await brandServices.getBrandById(brandId)
-    await Promise.all(categoriesIds.map(categoryId => categoryServices.getCategoryById(categoryId)))
-    const product = await productServices.createProduct(brandId, model, description, price, categoriesIds, color, images)
-    await brandServices.addProductToBrand(brandId, product.id)
-    await Promise.all(categoriesIds.map(categoryId => categoryServices.addProductToCategory(categoryId, product.id)))
+    let brandModel = await brandServices.getByName(brand)
+    let categoryModels = await Promise.all(categories.map(category => categoryServices.getByName(category)))
+    let categoriesIds = categoryModels.map(category => category._id)
+    let product = await productServices.createProduct(brandModel._id, model, description, price, categoriesIds, color, images)
+    await brandServices.addProductToBrand(brandModel._id, product._id)
+    await Promise.all(categoriesIds.map(categoryId => categoryServices.addProductToCategory(categoryId, product._id)))
+    product = await productServices.getPublicProduct(product._id)
     res.json(product)
   } catch (error) {
     if (images) {
@@ -34,7 +36,7 @@ async function createProduct (req, res, next) {
 async function getProductById (req, res, next) {
   const productId = req.params.id
   try {
-    let product = await productServices.getPopulatedProduct(productId)
+    let product = await productServices.getPublicProduct(productId)
     res.json(product)
   } catch (error) {
     next(error)
@@ -65,7 +67,7 @@ async function deleteProduct (req, res, next) {
 
     await Promise.all(product.carts.map(cartId => cartServices.removeProductFromCart(cartId, productId)))
 
-    res.json({message: 'Product deleted successfully.'})
+    res.json({ message: 'Product deleted successfully.' })
   } catch (error) {
     next(error)
   }
@@ -73,23 +75,40 @@ async function deleteProduct (req, res, next) {
 
 async function updateProduct (req, res, next) {
   const productId = req.params.id
-  let {brandId, model, description, price, categoriesIds, color} = req.body
-  let images = req.files || []
+  let { brand, model, description, price, categories, color } = req.body
+  let files = req.files || []
   try {
-    categoriesIds = JSON.parse(categoriesIds)
+    categories = JSON.parse(categories)
   } catch (error) {
-    return next(new TypeError(errorMsgGenerator.invalidDataMsg('categoriesIds', 'JSON array', categoriesIds)))
+    return next(new TypeError(errorMsgGenerator.invalidDataMsg('categoriesIds', 'JSON array', categories)))
   }
-
+  let images
   try {
-    let brand = await brandServices.getBrandById(brandId)
-    let categories = await Promise.all(categoriesIds.map(categoryId => categoryServices.getCategoryById(categoryId)))
-    images = images ? await Promise.all(images.map(image => imageServices.create(image))) : []
+    let product = await productServices.getProductById(productId)
+    let newBrand = await brandServices.getByName(brand)
+    let oldBrand = product.brand
+    let newCategories = await Promise.all(categories.map(categoryId => categoryServices.getByName(categoryId)))
+    let oldCategories = product.categories
 
-    const product = await productServices
-      .updateProduct(productId, brand, model, description, price, categories, color, images)
+    if (oldBrand.name !== brand) {
+      await brandServices.removeProductFromBrand(oldBrand._id, product._id)
+      await brandServices.addProductToBrand(newBrand._id, product._id)
+    }
+
+    await Promise.all(oldCategories.map(category => categoryServices.removeProductFromCategory(category._id, product._id)))
+    await Promise.all(newCategories.map(category => categoryServices.addProductToCategory(category._id, product._id)))
+
+    let categoriesIds = newCategories.map(category => category._id)
+    images = files ? await Promise.all(Object.keys(files).map(key => imageServices.create(files[key]))) : []
+
+    await productServices.updateProduct(product._id, newBrand._id, model, description, price, categoriesIds, color, images)
+
+    product = await productServices.getPublicProduct(product._id)
     res.json(product)
   } catch (error) {
+    if (images) {
+      await Promise.all(images.map(image => imageServices.remove(image)))
+    }
     next(error)
   }
 }

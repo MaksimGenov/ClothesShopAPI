@@ -1,6 +1,7 @@
 const categoryServices = require('./category-services')
 const productServices = require('../products/product-services')
 const imageService = require('../images/image-services')
+
 async function createCategory (req, res, next) {
   const {name} = req.body
   const file = req.files.image
@@ -62,7 +63,7 @@ async function getCategoryProducts (req, res, next) {
   const categoryId = req.params.id
   try {
     const category = await categoryServices.getCategoryById(categoryId)
-    const products = await Promise.all(category.products.map(productId => productServices.getProductById(productId)))
+    const products = await Promise.all(category.products.map(productId => productServices.getPublicProduct(productId)))
     res.json(products)
   } catch (error) {
     next(error)

@@ -90,7 +90,7 @@ async function getBrandProducts (req, res, next) {
   const brandId = req.params.id
   try {
     const brand = await brandServices.getBrandById(brandId)
-    const products = await Promise.all(brand.products.map(productId => productServices.getPopulatedProduct(productId)))
+    const products = await Promise.all(brand.products.map(productId => productServices.getPublicProduct(productId)))
     res.json(products)
   } catch (error) {
     next(error)

@@ -103,8 +103,22 @@ function removeProductFromBrand (brandId, productId) {
   return new Promise(async (resolve, reject) => {
     try {
       let brand = await getBrandById(brandId)
-      brand.products = brand.products.filter(product => product._id.toString() !== productId)
+      brand.products = brand.products.filter(product => product._id.toString() !== productId.toString())
       await brand.save()
+      resolve(brand)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function getByName (name) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let brand = await Brand.findOne({name: name.toLowerCase()})
+      if (!brand) {
+        return reject(new ReferenceError(errorMsgGenerator.unexistingModel('Brand')))
+      }
       resolve(brand)
     } catch (error) {
       reject(error)
@@ -114,6 +128,7 @@ function removeProductFromBrand (brandId, productId) {
 
 module.exports = {
   createBrand,
+  getByName,
   getBrandById,
   getAllBrands,
   deleteBrand,

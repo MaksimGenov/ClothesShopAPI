@@ -28,9 +28,9 @@ function createProduct (brandId, model, description, price, categoriesIds, color
       const product = new Product({
         categories: categoriesIds,
         brand: brandId,
-        model,
+        model: model.toLowerCase(),
         description,
-        color,
+        color: color.toLowerCase(),
         price: +price,
         images
       })
@@ -49,6 +49,9 @@ function getProductById (productId) {
     }
     try {
       const product = await Product.findById(productId)
+        .populate('brand')
+        .populate('categories')
+        .populate('images')
       if (!product) {
         return reject(new ReferenceError(errorMsgGenerator.unexistingModelId('Product', productId)))
       }
@@ -113,7 +116,7 @@ function updateProduct (productId, brand, model, description, price, categories,
       product.description = description
       product.color = color
       product.price = price
-      product.image.concat(images)
+      product.images = product.images.concat(images)
       await product.save()
       resolve(product)
     } catch (error) {
@@ -161,7 +164,7 @@ function removeCategoryFromProduct (productId, categoryId) {
   })
 }
 
-function getPopulatedProduct (productId) {
+function getPublicProduct (productId) {
   return new Promise(async (resolve, reject) => {
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return reject(new TypeError(errorMsgGenerator.invalidIdMsg('Product', productId)))
@@ -196,5 +199,5 @@ module.exports = {
   addCartToProduct,
   removeCartFromProduct,
   removeCategoryFromProduct,
-  getPopulatedProduct
+  getPublicProduct
 }
