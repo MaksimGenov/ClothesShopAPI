@@ -98,8 +98,23 @@ function updateCategory (categoryId, name) {
   })
 }
 
+function getByName (name) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let category = await Category.find({name})
+      if (!category) {
+        return reject(new ReferenceError(errorMsgGenerator.unexistingModel('Category')))
+      }
+      resolve(category)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
 module.exports = {
   createCategory,
+  getByName,
   getCategoryById,
   getAllCategories,
   deleteCategory,
