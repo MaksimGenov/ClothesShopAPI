@@ -13,8 +13,8 @@ module.exports = (app) => {
   app.use((error, req, res, next) => {
     if (error) {
       if (error.name === 'TypeError' || 'ReferenceError') {
-        res.status(300)
-        return res.json({error: error.message})
+        res.status(400)
+        return res.json(error.message)
       }
       res.status(500)
       res.json({error: 'Oops something went wrong!'})

@@ -20,7 +20,7 @@ userSchema.statics.seedAdminUser = async function () {
     if (users.length > 0) { return }
     let cart = await Cart.create({})
     let salt = encryption.generateSalt()
-    let hashedPassword = encryption.generateHash(salt, '123456')
+    let hashedPassword = encryption.generateHash(salt, 'As123456')
 
     const user = await this.create({
       username: 'Admin',

@@ -1,11 +1,13 @@
+const isAdmin = require('../users/controllers/is-admin.controller')
 const router = require('express').Router()
-const brandsController = require('./brands-controller')
+const brandsController = require('./controllers/index-brand.controller')
+const passport = require('passport')
 
 router
-  .post('/create', brandsController.createBrand)
-  .get('/get/:id', brandsController.getBrandById)
-  .get('/all', brandsController.getAllBrands)
-  .get('/:id/products', brandsController.getBrandProducts)
-  .delete('/delete/:id', brandsController.deleteBrand)
-  .put('/update/:id', brandsController.updateBrand)
+  .post('/create', passport.authenticate('jwt', {session: false}), isAdmin, brandsController.create)
+  .get('/all', brandsController.getAll)
+  .get('/:id/products', brandsController.getProducts)
+  .get('/:id', brandsController.getById)
+  .delete('/:id', passport.authenticate('jwt', {session: false}), isAdmin, brandsController.delete)
+  .put('/:id', passport.authenticate('jwt', {session: false}), isAdmin, brandsController.edit)
 module.exports = router

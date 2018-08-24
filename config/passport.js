@@ -10,7 +10,7 @@ module.exports = app => {
   options.secretOrKey = settings.development.JWTSecret
   passport.use(new JwtStrategy(options, async function (token, done) {
     try {
-      const user = await User.find({username: token.username})
+      const user = await User.findOne({username: token.username})
       if (!user) { return done('Invalid credentials!', false) }
       done(null, user)
     } catch (error) {

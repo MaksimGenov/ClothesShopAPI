@@ -1,8 +1,10 @@
 const router = require('express').Router()
-const cartController = require('./cart-services')
+const cartController = require('./controllers/index-cart.controller')
+const passport = require('passport')
+
 router
-  .get('/get/:id', cartController.getCartById)
-  .post('/:cartId/addProduct/:productId', cartController.addProductToCart)
-  .post('/:cartId/removeProduct/:productId', cartController.removeProductFromCart)
+  .get('/:id', passport.authenticate('jwt', { session: false }), cartController.getById)
+  .post('/:cartId/addProduct/:productId', passport.authenticate('jwt', { session: false }), cartController.addProduct)
+  .post('/:cartId/removeProduct/:productId', passport.authenticate('jwt', { session: false }), cartController.removeProduct)
 
 module.exports = router

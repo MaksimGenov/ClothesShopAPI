@@ -9,7 +9,7 @@ function remove (imageId) {
       if (error) { return reject(error) }
 
       try {
-        await Image.findByIdAndRemove(imageId)
+        await Image.findByIdAndRemove(imageId.toString())
         resolve()
       } catch (error) {
         reject(error)
