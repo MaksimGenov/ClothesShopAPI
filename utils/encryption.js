@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 
 function generateHash (salt, value) {
-  return crypto.createHmac('sha256', salt).digest().toString('hex')
+  return crypto.createHmac('sha256', salt + value).digest().toString('hex')
 }
 
 function generateSalt () {

@@ -13,7 +13,7 @@ module.exports = function createBrand (name, description, image) {
       return reject(new TypeError(errorMsgGenerator.invalidDataMsg('image', 'file', image)))
     }
     try {
-      const brand = await Brand.create({name, description, image})
+      const brand = await Brand.create({name: name.toLocaleLowerCase(), description, image})
       resolve(brand)
     } catch (error) {
       reject(error)

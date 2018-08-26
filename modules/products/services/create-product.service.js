@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Product = mongoose.model('Product')
 const errorMsgGenerator = require('../../../utils/errorMessageGenerator')
 
-module.exports = function createProduct (brandId, model, description, price, categoriesIds, color, images) {
+module.exports = function createProduct (brand, model, description, price, categories, color, images) {
   return new Promise(async (resolve, reject) => {
     if (!model || typeof model !== 'string') {
       return reject(new TypeError(errorMsgGenerator.invalidDataMsg('model', 'string', model)))
@@ -26,8 +26,8 @@ module.exports = function createProduct (brandId, model, description, price, cat
 
     try {
       const product = new Product({
-        categories: categoriesIds,
-        brand: brandId,
+        categories: categories,
+        brand: brand,
         model: model.toLowerCase(),
         description,
         color: color.toLowerCase(),
